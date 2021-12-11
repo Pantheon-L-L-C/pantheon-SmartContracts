@@ -1,0 +1,196 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/arnavshah/Desktop/ForgeTest/src/Contract.sol": {
+      "lastModificationDate": 1639035212071,
+      "contentHash": "338c2b456417869f11b228de3b3fbaed",
+      "sourceName": "src/Contract.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "istanbul"
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.10"
+      ],
+      "artifacts": [
+        "Contract"
+      ]
+    },
+    "/Users/arnavshah/Desktop/ForgeTest/src/gen2.sol": {
+      "lastModificationDate": 1639113250731,
+      "contentHash": "b66801ead1341faeef2bacac44538e7a",
+      "sourceName": "src/gen2.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "istanbul"
+        }
+      },
+      "imports": [
+        "../lib/openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        "../lib/openzeppelin-contracts/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "Gen2"
+      ]
+    },
+    "/Users/arnavshah/Desktop/ForgeTest/src/main.sol": {
+      "lastModificationDate": 1639116355355,
+      "contentHash": "0b44c10007a8e34c5989a2bb258f3261",
+      "sourceName": "src/main.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "istanbul"
+        }
+      },
+      "imports": [
+        "../lib/openzeppelin-contracts/contracts/token/ERC1155/IERC1155.sol",
+        "../lib/openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        "../lib/openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol",
+        "../lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "./token.sol",
+        "./gen2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "Main"
+      ]
+    },
+    "/Users/arnavshah/Desktop/ForgeTest/src/test/Contract.t.sol": {
+      "lastModificationDate": 1639116444536,
+      "contentHash": "eb590ba308133e7e3257ea0bce0ab576",
+      "sourceName": "src/test/Contract.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "istanbul"
+        }
+      },
+      "imports": [
+        "../../lib/ds-test/src/test.sol",
+        "../gen2.sol",
+        "../main.sol",
+        "../token.sol"
+      ],
+      "versionPragmas": [
+        "0.8.10"
+      ],
+      "artifacts": [
+        "ContractTest"
+      ]
+    },
+    "/Users/arnavshah/Desktop/ForgeTest/src/token.sol": {
+      "lastModificationDate": 1639113175391,
+      "contentHash": "934e6968de6e57ac0ff426de2468fac1",
+      "sourceName": "src/token.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "istanbul"
+        }
+      },
+      "imports": [
+        "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "../lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
+        "../lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "./main.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "YieldToken",
+        "getBalance"
+      ]
+    }
+  }
+}
