@@ -1,10 +1,11 @@
 const { ethers, utils } = require("ethers");
 const { MerkleTree } = require("merkletreejs");
 const keccak256 = require("keccak256");
+const { Buffer } =require('buffer');
 
 const users = [
     { address: "0xD08c8e6d78a1f64B1796d6DC3137B19665cb6F1F", amount: 1 },
-    { address: "0xb7D15753D3F76e7C892B63db6b4729f700C01298", amount: 10 },
+    { address: "0xb7D15753D3F76e7C892B63db6b4729f700C01298", amount: 10 }, // proof element
     { address: "0xf69Ca530Cd4849e3d1329FBEC06787a96a3f9A68", amount: 1 },
     { address: "0xa8532aAa27E9f7c3a96d754674c99F1E2f824900", amount: 1 },
     { address: "0xa8532aAa27E9f7c3a96d754674c99F1E2f824100", amount: 10 },
@@ -28,3 +29,24 @@ const proof = merkleTree.getHexProof(leaf);
 console.log(merkleTree.verify(proof, leaf, root)) // true
 console.log(proof)
 console.log(root)
+
+function hexToBytes(hex) {
+  for (var bytes = [], c = 0; c < hex.length; c += 2)
+      bytes.push(parseInt(hex.substr(c, 2), 16));
+      bytes.shift()
+  return bytes;
+}
+
+const convertProof = ((x) => {
+  var myBuffer = [];
+  for (let i = 0; i < x.length; i++) {
+    myBuffer.push(hexToBytes(x[i]));
+  }
+  console.log(myBuffer)
+})
+
+// elements in x and then pass that into the buffer at next element in array
+const woah = convertProof(proof);
+
+console.log(merkleTree.verify(woah, leaf, root));
+
