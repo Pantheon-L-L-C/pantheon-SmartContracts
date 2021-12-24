@@ -7,10 +7,16 @@ import "../main.sol";
 import "../token.sol";
 import "../../lib/openzeppelin-contracts/contracts/token/ERC721/utils/ERC721Holder.sol";
 
+interface Vm {
+    function warp(uint256 x) external;
+    function expectRevert(bytes calldata) external;
+}
+
 contract ContractTest is DSTest, ERC721Holder {
     Main main;
     YieldToken yield;
     Gen2 gen2;
+    Vm vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
     function setUp() public {
         bytes32 root = 0x4d32c58ef0a2d0cea440002d346d7d413c49f93ec252522642e1e4937e85089a;
@@ -63,21 +69,67 @@ contract ContractTest is DSTest, ERC721Holder {
     }
 
     function test_PublicMint() public {
-        
+        main.changeStatus(3);
+        main.getPublicNFT{value: 0.4 ether}(1);
     }
 
+    function testFail_PublicMintLaterPhases() public {
+        // should req .4 ether, not .2 or .125
+        main.changeStatus(3);
+        main.getPublicNFT{value:0.4 ether}(2); // this would work in 2nd phase
+        main.getPublicNFT{value:0.25 ether}(2); // this would work in general phase
+    }
+
+    function test_PublicMintLaterPhase() public {
+        main.changeStatus(3);
+        main.getPublicNFT{value: 0.4 ether}(1);
+        vm.warp(block.timestamp + 4 hours);
+        main.getPublicNFT{value:0.4 ether}(2); // this would work in 2nd phase
+        vm.warp(block.timestamp + 4 hours);
+        main.getPublicNFT{value:0.25 ether}(2); // this would work in general phase
+        // tests first, second, and general phase
+    }
+
+    function testFail_PublicMintSecondPhase() public {
+        main.changeStatus(3);
+        vm.warp(block.timestamp + 4 hours);
+        main.getPublicNFT{value: 0.4 ether}(1); // should revert, this is first phase price
+        main.getPublicNFT{value: 0.25 ether}(2); // revert, general phase price.
+    }
+
+    function testFail_PublicMintGeneralPhase() public {
+        main.changeStatus(3);
+        vm.warp(block.timestamp + 8 hours); 
+        main.getPublicNFT{value: 0.4 ether}(1); // first phase
+        main.getPublicNFT{value:0.4 ether}(2); // second phase
+    }
+
+    function testFail_getGenTwoWithoutAnyBalance() public {
+        main.getGenTwo(2); // dont have any balance
+    }
+
+    function test_burnAGen1() public {
+        main.changeStatus(3);
+        vm.warp(block.timestamp + 8 hours);
+        main.getPublicNFT{value:0.25 ether}(2); // this would work in general phase
+        yield.getClaimable(msg.sender);
+        main.burnGen1(0); // burn amount exceeds balance    
+        main.redeemReward();
+        main.getGenTwo(1);
+    }
 }
+
     
 
     /**
-        can be tested in phases:
-        // start time for publicNFT 
+        
 
-        pre-launch, council WL, generalWL, paused
 
-        getNFT function in each phase
+        paused
 
-        getpublicNFT
+        
+
+        
         transferFrom
         safeTransferFrom
         claimPlanarBal?
