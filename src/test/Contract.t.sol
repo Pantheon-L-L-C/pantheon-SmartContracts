@@ -112,9 +112,12 @@ contract ContractTest is DSTest, ERC721Holder {
         main.changeStatus(3);
         vm.warp(block.timestamp + 8 hours);
         main.getPublicNFT{value:0.25 ether}(2); // this would work in general phase
-        yield.getClaimable(msg.sender);
-        main.burnGen1(0); // burn amount exceeds balance    
+        // should be 20 after this
+        uint neww = main.getClaimable(); // how to reveal this value?
+        require(neww > 19 ether, "BOOM");
+        main.burnGen1(0);
         main.redeemReward();
+        // require(yield.balanceOf(msg.sender) > 100 ether);
         main.getGenTwo(1);
     }
 }

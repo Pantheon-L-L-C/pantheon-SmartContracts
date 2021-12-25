@@ -123,7 +123,7 @@ contract Main is ERC721Enumerable, Ownable {
     }
 
     function mintHero(uint amount) internal {
-        require(currentMint + amount <= 11111, "Exceeds Max Supply");
+        require(currentMint + amount <= 11111, "Exceeds Max Supply"); //currMint is 0
         yield.updateOnMint(msg.sender, amount);
         balance[msg.sender] += amount;
         for (uint i = 0; i < amount; i++) {
@@ -164,10 +164,10 @@ contract Main is ERC721Enumerable, Ownable {
     }
 
     function getGenTwo(uint amount) external {
-        require(balance[msg.sender] > 1, "Must have at least one Gen 1 NFT");
-        yield.burn(msg.sender, 100 ether);
+        require(balance[msg.sender] > 0, "Must have at least one Gen 1 NFT");
+        yield.burn(msg.sender, (100 ether * amount));
         generationTwo.mintNextGen(msg.sender, amount);
-        gen2Bal[msg.sender] += amount;
+        gen2Bal[msg.sender] += amount; // not using gen2Bal as a check so no reentrancy
     }
 
     function burnGen1(uint ID) external {
@@ -175,6 +175,15 @@ contract Main is ERC721Enumerable, Ownable {
         _burn(ID);
         yield.updateRewardOnBurn(msg.sender);
         balance[msg.sender]--;        
+    }
+
+    function redeemReward() external {
+        yield.updateReward(msg.sender, address(0));
+        yield.getReward(msg.sender);
+    }
+
+    function getClaimable() external view returns(uint) {
+        return yield.getClaimable(msg.sender);
     }
     
     function withdraw() external onlyOwner {

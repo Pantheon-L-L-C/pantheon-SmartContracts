@@ -84,6 +84,7 @@ contract YieldToken is Ownable, ERC20 {
     }
 
     function getClaimable(address user) external view returns(uint) {
+        require(msg.sender == pantheon);
         uint rewards = yield[user];
         uint time = block.timestamp;
         uint timeDiff = time - lastUpdate[user];
