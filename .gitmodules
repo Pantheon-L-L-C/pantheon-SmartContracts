@@ -7,3 +7,6 @@
 [submodule "lib/buidler-etherscan"]
 	path = lib/buidler-etherscan
 	url = https://github.com/nomiclabs/buidler-etherscan
+[submodule "lib/lib/hardhat"]
+	path = lib/lib/hardhat
+	url = https://github.com/nomiclabs/hardhat
