@@ -22,7 +22,7 @@ contract Gen2 is ERC721Enumerable, Ownable {
 
     function mintNextGen(address receiver, uint amount) external {
         require(msg.sender == pantheon);
-        require(currentMint + amount <= maxSupply);
+        require(currentMint + amount < maxSupply); // started off with currMint = 0 so cant be <=
         for (uint i = 0; i < amount; i++) {
             _safeMint(receiver, currentMint);
             emit Minted(receiver, currentMint);
@@ -41,6 +41,6 @@ contract Gen2 is ERC721Enumerable, Ownable {
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+        // json
     }
 }   
-
