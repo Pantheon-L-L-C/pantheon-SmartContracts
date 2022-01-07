@@ -132,6 +132,8 @@ contract ContractTest is DSTest, ERC721Holder {
     function testGetClaimable() public view {
         yield.getClaimable(address(this));
     }
+
+    receive() external payable {}
 }
 
 // double check yield.getClaimable(address(this))
