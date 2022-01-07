@@ -12,6 +12,7 @@ import "./gen2.sol";
 contract Main is ERC721Enumerable, Ownable {
     
     using Strings for uint256;
+    uint reservedRemaining = 300;
     uint startTime;
     uint currentMint = 0;
     uint firstPhase = 400000000000000000 wei; // 0.4 ETH
@@ -86,13 +87,15 @@ contract Main is ERC721Enumerable, Ownable {
         //bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
         //require(MerkleProof.verify(proof, sponsorMerkleRoot, leaf), "Invalid Credentials");
         sponsorClaimed[msg.sender] = true;
+        reservedRemaining -= amount;
         mintHero(amount);
+
     }
 
     function getCouncilWaitlistNFT(uint amount /** , bytes32[] calldata proof */) external payable {
         require(status == Status.CouncilWL, "Council Waitlist Not Active");
         require(msg.value == councilWLValue * amount, "Must send 0.1 ETH per");
-        // bytes32 leaf = keccak256(abi.encodePacked(msg.sender, uint(0))); // i think its address then amount
+        // bytes32 leaf = keccak256(abi.encodePacked(msg.sender, uint(0))); // address then amount
         // require(MerkleProof.verify(proof, merkleRoot, leaf), "Invalid Credentials");
         require(balance[msg.sender] + amount <= 2, "Over Max Waitlist Allocation");
         mintHero(amount);
@@ -123,7 +126,7 @@ contract Main is ERC721Enumerable, Ownable {
     }
 
     function mintHero(uint amount) internal {
-        require(currentMint + amount <= 11111, "Exceeds Max Supply"); //currMint is 0
+        require(currentMint + amount + reservedRemaining < 11111, "Exceeds Max Supply");
         yield.updateOnMint(msg.sender, amount);
         balance[msg.sender] += amount;
         for (uint i = 0; i < amount; i++) {
@@ -155,7 +158,7 @@ contract Main is ERC721Enumerable, Ownable {
         for (uint i = 0; i < sender.length; i++) {
             require(sender[i] == msg.sender, "NOT MSG.SENDER ADDRESS");
         }
-        uint[] memory result = planar.balanceOfBatch(sender, planarIds);
+        uint[] memory result = planar.balanceOfBatch(sender, planarIds); // uint[6]
         uint total;
         for (uint i = 0; i < result.length; i++) {
             total += result[i];
@@ -182,34 +185,16 @@ contract Main is ERC721Enumerable, Ownable {
         yield.getReward(msg.sender);
     }
 
-    function getClaimable() external view returns(uint) {
+    function getClaimable() external view returns(uint) { // could have this just be via token.sol, removed require(pantheon) for now from that contract
         return yield.getClaimable(msg.sender);
     }
-    
-    function withdraw() external onlyOwner {
+
+    function checkBalance() external view returns(uint) {
+        return yield.balanceOf(msg.sender);
+    }
+
+    function withdraw() external payable onlyOwner {
         uint balanceWithdraw = address(this).balance;
         payable(msg.sender).transfer(balanceWithdraw);
     }
-
-    /**
-        so the idea is basically
-        have another contract that stores traits in memory and burn token2 on merge
-
-        but how do you then update the images, there needs to be some sort of merge period
-
-        that updates each individual image?
-        maybe some external image builder that reads traits and creates an IPFS metadata?
-
-        also trait 1 and trait 2 are existing traits so you are burning ur entire token 2
-        so you can have a new token that has a trait on merge - this needs to look 
-        different from the original NFts since otherwise on paper its just the same thing?
-        something with a trait 1-7 that it also has a category for, you gotta distinguish 
-        in the looks - they dont keep track of which trait is from which right now
-        so assumption is all traits are the same? then what does a merge do
-        
-        maybe the existing metadata has 7 traits (attributes) - needs to be some external
-        image creator that reflects the merge
-    
-    
-     */
 }
