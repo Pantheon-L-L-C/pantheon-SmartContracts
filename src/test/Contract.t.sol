@@ -111,17 +111,30 @@ contract ContractTest is DSTest, ERC721Holder {
     function test_burnAGen1() public {
         main.changeStatus(3);
         vm.warp(block.timestamp + 8 hours);
-        main.getPublicNFT{value:0.25 ether}(2); // this would work in general phase
-        // should be 20 after this
-        uint neww = main.getClaimable(); // how to reveal this value?
+        main.getPublicNFT{value:0.25 ether}(2); // this would work in general phase - should be 20 after this
+        uint neww = yield.getClaimable(address(this)); //so msg.sender doesnt work? passsing in this address
         require(neww > 19 ether, "BOOM");
         main.burnGen1(0);
         main.redeemReward();
-        // require(yield.balanceOf(msg.sender) > 100 ether);
+        require(yield.balanceOf(address(this)) >= 120 ether, "Less amount"); // should be 120
         main.getGenTwo(1);
+    }
+
+    function test_Withdraw() public {
+        main.changeStatus(3);
+
+        vm.warp(block.timestamp + 8 hours);
+        main.getPublicNFT{value:1 ether}(8); // this would work in general phase - should be 20 after this
+        main.withdraw();
+        //require(address(this).balance == 1 ether, "incorrect");
+    }
+
+    function testGetClaimable() public view {
+        yield.getClaimable(address(this));
     }
 }
 
+// double check yield.getClaimable(address(this))
     
 
     /**
