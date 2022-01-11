@@ -197,7 +197,7 @@ contract ContractTest is DSTest, ERC721Holder {
             address(this),
             address(this)
         ];
-        main.claimPlanarBal(send);
+        main.claimPlanarBal(send); //test
     }
 
     receive() external payable {}
