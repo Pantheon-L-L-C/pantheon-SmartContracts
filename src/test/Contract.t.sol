@@ -112,7 +112,7 @@ contract ContractTest is DSTest, ERC721Holder {
         main.changeStatus(3);
         vm.warp(block.timestamp + 8 hours);
         main.getPublicNFT{value:0.25 ether}(2); // this would work in general phase - should be 20 after this
-        uint neww = yield.getClaimable(address(this)); //so msg.sender doesnt work? passsing in this address
+        uint neww = main.getClaimable();
         require(neww > 19 ether, "BOOM");
         main.burnGen1(0);
         main.redeemReward();
@@ -122,7 +122,6 @@ contract ContractTest is DSTest, ERC721Holder {
 
     function test_Withdraw() public {
         main.changeStatus(3);
-
         vm.warp(block.timestamp + 8 hours);
         main.getPublicNFT{value:1 ether}(8); // this would work in general phase - should be 20 after this
         main.withdraw();
@@ -130,42 +129,89 @@ contract ContractTest is DSTest, ERC721Holder {
     }
 
     function testGetClaimable() public view {
-        yield.getClaimable(address(this));
+        main.getClaimable();
+    }
+
+    function testWhilePaused() public {
+        main.changeStatus(3);
+        vm.warp(block.timestamp + 8 hours);
+        main.getPublicNFT{value:1 ether}(8);
+        main.changeStatus(4); // now paused
+        main.changeStatus(3);
+        vm.warp(block.timestamp + 8 hours);
+        main.getPublicNFT{value:1 ether}(8);
+    }
+
+    function testTransfer() public {
+        main.changeStatus(3);
+        vm.warp(block.timestamp + 8 hours);
+        main.getPublicNFT{value:1 ether}(8);
+        main.transferFrom(address(this), address(0x6cB5FceFa0037c373aD1Ec7717874117D353bF49), 7);
+        main.safeTransferFrom(address(this), address(0x6cB5FceFa0037c373aD1Ec7717874117D353bF49), 6);
+    }
+
+    /** function testMaxGeneralMint() public { this succeeds
+        main.changeStatus(3);
+        for (uint i = 0; i < 11111; i++) {
+            main.getPublicNFT{value: 0.4 ether}(1);
+        } // should work, 11112 should not 
+        require(main.totalSupply() == 11111, "WRONG TOTAL SUPPLY");
+    }
+    **/
+
+    /** function testFailMaxGeneralMint() public { this succeeds
+        main.changeStatus(3);
+        for (uint i = 0; i < 11112; i++) {
+            main.getPublicNFT{value: 0.4 ether}(1);
+        } // 11112 should not work
+    }
+    **/
+
+    function testMint10AndGetGen2() public {
+        main.changeStatus(3);
+        main.getPublicNFT{value: 4 ether}(10);
+        main.redeemReward();
+        main.getGenTwo(1);
+    }
+
+    function testFailMint9AndGetGen2() public {
+        main.changeStatus(3);
+        main.getPublicNFT{value: 3.6 ether}(9);
+        main.redeemReward();
+        main.getGenTwo(1);
+    }
+
+    function testMint20AndGetGen2() public {
+        main.changeStatus(3);
+        main.getPublicNFT{value: 8 ether}(20);
+        main.redeemReward();
+        main.getGenTwo(1);
+    }
+
+    function testPlanarBal() public {
+        address[6] memory send = [
+            address(this),
+            address(this),
+            address(this),
+            address(this),
+            address(this),
+            address(this)
+        ];
+        main.claimPlanarBal(send);
     }
 
     receive() external payable {}
+
 }
 
-// double check yield.getClaimable(address(this))
     
 
     /**
+        claimplanarBal + planarIds
+        merkle proofs - there are 2 merkle roots - councilWL + generalWL - deploy on testnet
         
-
-
-        paused
-
-        
-
-        
-        transferFrom
-        safeTransferFrom
-        claimPlanarBal?
-
-        getClaimable from token.sol
-        maxMint for gen1 and gen2
-
-        mint 10 and then claim gen2
-        mint 9 and then claim gen2 - should fail not 10
-
-
-
-        there are 2 merkle roots - councilWL + generalWL and then the
-        sponsorship one
-        
-        test sponsorship via hardhat
-    
-    
+        OpenSea specific stuff for deployment
+        Reveal URI - setBaseURI when ready or avery on backend - do we want a provenanceHash
      */
 
     /**

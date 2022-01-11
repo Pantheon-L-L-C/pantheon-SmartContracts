@@ -12,7 +12,7 @@ import "./gen2.sol";
 contract Main is ERC721Enumerable, Ownable {
     
     using Strings for uint256;
-    uint reservedRemaining = 300;
+    //uint reservedRemaining = 300;
     uint startTime;
     uint currentMint = 0;
     uint firstPhase = 400000000000000000 wei; // 0.4 ETH
@@ -87,7 +87,7 @@ contract Main is ERC721Enumerable, Ownable {
         //bytes32 leaf = keccak256(abi.encodePacked(msg.sender, amount));
         //require(MerkleProof.verify(proof, sponsorMerkleRoot, leaf), "Invalid Credentials");
         sponsorClaimed[msg.sender] = true;
-        reservedRemaining -= amount;
+        //reservedRemaining -= amount;
         mintHero(amount);
 
     }
@@ -126,7 +126,7 @@ contract Main is ERC721Enumerable, Ownable {
     }
 
     function mintHero(uint amount) internal {
-        require(currentMint + amount + reservedRemaining < 11111, "Exceeds Max Supply");
+        require(currentMint + amount <= 11111, "Exceeds Max Supply"); // + reservedRemaining, <= bc u have to mint the current mint
         yield.updateOnMint(msg.sender, amount);
         balance[msg.sender] += amount;
         for (uint i = 0; i < amount; i++) {
@@ -154,11 +154,13 @@ contract Main is ERC721Enumerable, Ownable {
         planarIds = ids;
     }
 
-    function claimPlanarBal(address[] memory sender) external {
+    function claimPlanarBal(address[6] memory sender) external {
+        address[] memory woah = new address[](6);
         for (uint i = 0; i < sender.length; i++) {
             require(sender[i] == msg.sender, "NOT MSG.SENDER ADDRESS");
+            woah[i] = sender[i];
         }
-        uint[] memory result = planar.balanceOfBatch(sender, planarIds); // uint[6]
+        uint[] memory result = planar.balanceOfBatch(woah, planarIds); // uint[6]
         uint total;
         for (uint i = 0; i < result.length; i++) {
             total += result[i];
@@ -185,7 +187,7 @@ contract Main is ERC721Enumerable, Ownable {
         yield.getReward(msg.sender);
     }
 
-    function getClaimable() external view returns(uint) { // could have this just be via token.sol, removed require(pantheon) for now from that contract
+    function getClaimable() external view returns(uint) {
         return yield.getClaimable(msg.sender);
     }
 
