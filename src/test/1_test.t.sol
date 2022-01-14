@@ -188,18 +188,6 @@ contract ContractTest is DSTest, ERC721Holder {
         main.getGenTwo(1);
     }
 
-    function testPlanarBal() public {
-        address[6] memory send = [
-            address(this),
-            address(this),
-            address(this),
-            address(this),
-            address(this),
-            address(this)
-        ];
-        main.claimPlanarBal(send); //test
-    }
-
     receive() external payable {}
 
 }
@@ -209,6 +197,7 @@ contract ContractTest is DSTest, ERC721Holder {
     /**
         claimplanarBal + planarIds
         merkle proofs - there are 2 merkle roots - councilWL + generalWL - deploy on testnet
+        many versions thing 
         
         OpenSea specific stuff for deployment
         Reveal URI - setBaseURI when ready or avery on backend - do we want a provenanceHash
